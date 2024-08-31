@@ -1,29 +1,93 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Todoinput from "./component/Todoinput";
+import Todolist from "./component/Todolist";
 
 export default function App() {
-  const [todos, setTodos] = useState([
-    {
-      todo: "chai",
-      Id: Date.now(),
-      completed: false,
+  const [filter, setFilter] = useState("All");
+  const [todo, setTodo] = useState("");
+  const [todos, setTodos] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+const [currentEditId, setCurrentEditId] = useState(null);
+
+  const handleAddTodo = useCallback(() => {
+    if (isEditing) {
+      setTodos(
+          todos.map((item) =>
+              item.id === currentEditId ? { ...item, todo } : item
+          )
+      );
+      setIsEditing(false);
+      setCurrentEditId(null);
+  } else {
+    const todosArr = [
+      ...todos,
+      {
+        todo,
+        id: Date.now(),
+        completed: false,
+      },
+    ];
+    setTodos([...todosArr]);
+  }
+    setTodo("");
+  }, [todo,isEditing, currentEditId]);
+
+  const handleonDelete = useCallback(
+    (id) => {
+      const filter = todos.filter((data) => data.id !== id);
+      setTodos([...filter]);
     },
-  ]);
+    [todos]
+  );
+
+  const handleOnToggleTodo = useCallback(
+    (id) => {
+      const todosArr = [...todos];
+      const todoInd = todosArr.findIndex((data) => data.id == id);
+      todosArr[todoInd].completed = !todosArr[todoInd].completed;
+      setTodos([...todosArr]);
+    },
+    [todos]
+  );
+
+  const handleEditTodo = (id, currentTodo) => {
+    setIsEditing(true);
+    setCurrentEditId(id);
+    setTodo(currentTodo);
+};
+
+  const filteredTodos = todos.filter((data) => {
+    if (filter == "All") {
+      return true;
+    }
+    if (filter == "Completed" && data.completed) {
+      return true;
+    }
+    if (filter == "UnCompleted" && !data.completed) {
+      return true;
+    }
+  });
+
   return (
     <>
       <div className="w-3/4 mx-auto mt-5">
         <h1 className="font-bold text-3xl text-center">My Todo</h1>
-        <Todoinput />
-        {todos.map((todo, ind) => {
-          return (
-            <div className="flex bg-slate-100" key={todo.Id}>
-              <h3 className="text-2xl text-left py-2 pl-2 font-mono font-medium flex-1">
-                {todo.todo}
-              </h3>
-              <button className="bg-blue-300 rounded-sm p-3 px-4">Delete</button>
-            </div>
-          );
-        })}
+        <Todoinput
+          value={todo}
+          onChange={(e) => setTodo(e.target.value)}
+          onClick={handleAddTodo}
+        />
+        <div className="flex justify-around items-center">
+          <button onClick={() => setFilter("All")}>All</button>
+          <button onClick={() => setFilter("Completed")}>Completed</button>
+          <button onClick={() => setFilter("UnCompleted")}>Un Completed</button>
+        </div>
+        <Todolist
+          toggleTodo={handleOnToggleTodo}
+          todos={filteredTodos}
+          onDelete={handleonDelete}
+          onEdit={handleEditTodo} 
+        />
       </div>
     </>
   );
