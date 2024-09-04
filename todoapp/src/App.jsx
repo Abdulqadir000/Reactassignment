@@ -7,30 +7,30 @@ export default function App() {
   const [todo, setTodo] = useState("");
   const [todos, setTodos] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
-const [currentEditId, setCurrentEditId] = useState(null);
+  const [currentEditId, setCurrentEditId] = useState(null);
 
   const handleAddTodo = useCallback(() => {
     if (isEditing) {
       setTodos(
-          todos.map((item) =>
-              item.id === currentEditId ? { ...item, todo } : item
-          )
+        todos.map((item) =>
+          item.id === currentEditId ? { ...item, todo } : item
+        )
       );
       setIsEditing(false);
       setCurrentEditId(null);
-  } else {
-    const todosArr = [
-      ...todos,
-      {
-        todo,
-        id: Date.now(),
-        completed: false,
-      },
-    ];
-    setTodos([...todosArr]);
-  }
+    } else {
+      const todosArr = [
+        ...todos,
+        {
+          todo,
+          id: Date.now(),
+          completed: false,
+        },
+      ];
+      setTodos([...todosArr]);
+    }
     setTodo("");
-  }, [todo,isEditing, currentEditId]);
+  }, [todo, isEditing, currentEditId]);
 
   const handleonDelete = useCallback(
     (id) => {
@@ -54,7 +54,7 @@ const [currentEditId, setCurrentEditId] = useState(null);
     setIsEditing(true);
     setCurrentEditId(id);
     setTodo(currentTodo);
-};
+  };
 
   const filteredTodos = todos.filter((data) => {
     if (filter == "All") {
@@ -86,7 +86,7 @@ const [currentEditId, setCurrentEditId] = useState(null);
           toggleTodo={handleOnToggleTodo}
           todos={filteredTodos}
           onDelete={handleonDelete}
-          onEdit={handleEditTodo} 
+          onEdit={handleEditTodo}
         />
       </div>
     </>

@@ -1,7 +1,7 @@
 function Todolist({ todos, onDelete, toggleTodo, onEdit }) {
   return (
     <>
-      {todos.map((todo, ind) => {
+      {todos.map((todo) => {
         return (
           <div className="flex my-2 bg-slate-100" key={todo.id}>
             <h3
