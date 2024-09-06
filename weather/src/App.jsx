@@ -33,28 +33,24 @@ const App = () => {
 
   const [chosen, setChosen] = useState(popularCities[0]);
   const [weatherData, setWeatherData] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   if (weatherData) {
     var { main, sys, weather, name } = weatherData;
   }
 
   var temp = Math.round(main?.temp - 273.15);
-  var feels_like = Math.round(main?.feels_like - 273.15);
 
   const handleCityChange = (e) => {
     setChosen(e.target.value);
   };
 
   useEffect(() => {
-    setLoading(true);
     fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${chosen}&appid=1f136667cfcdb418bf8b7a4c5a542f00`
     )
       .then((res) => res.json())
       .then((res) => {
         setWeatherData(res);
-        setLoading(false);
       })
       .catch((error) => console.error("Error:", error));
   }, [chosen]);
